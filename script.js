@@ -38,38 +38,32 @@ class Person {
         // If not in preferences, takscore stays 0
 
         // === GROUPSCORE: How well do the co-leaders match their preferences? (0-100) ===
-        let groupscore = 50; // Base score (neutral/no co-leaders specified)
-        
+        let groupscore = 100; // Start at perfect satisfaction
+
         const groupMembers = allAssignments
             .filter(p => p.assignedGroup === this.assignedGroup && p.naam !== this.naam)
             .map(p => p.naam.toLowerCase().trim());
 
-        // Bonus for desired co-leaders
-        if (this.priorities.metWie && this.priorities.metWie.length > 0) {
-            const preferredCount = this.priorities.metWie.filter(name => 
-                groupMembers.some(member => 
-                    member.includes(name.toLowerCase().trim()) || 
-                    name.toLowerCase().trim().includes(member)
-                )
-            ).length;
+        const desired = (this.priorities.metWie || []).map(n => n.toLowerCase().trim()).filter(n => n);
+        const undesired = (this.priorities.nietMet || []).map(n => n.toLowerCase().trim()).filter(n => n);
 
-            const maxPreferred = this.priorities.metWie.length;
-            const preferredRatio = preferredCount / Math.max(maxPreferred, 1);
-            groupscore = 50 + (preferredRatio * 50); // 50-100
-        }
+        // Smaller increments per person, not 100-point drops.
+        const desiredStep = desired.length > 0 ? 30 / desired.length : 0;
+        const undesiredStep = undesired.length > 0 ? 40 / undesired.length : 0;
 
-        // Penalty for conflicts (people they don't want to work with)
-        if (this.priorities.nietMet && this.priorities.nietMet.length > 0) {
-            const conflictCount = this.priorities.nietMet.filter(name => 
-                groupMembers.some(member => 
-                    member.includes(name.toLowerCase().trim()) || 
-                    name.toLowerCase().trim().includes(member)
-                )
-            ).length;
+        // Desired persons: reward presence, penalty missing.
+        desired.forEach(name => {
+            const found = groupMembers.some(member => member.includes(name) || name.includes(member));
+            groupscore += found ? desiredStep : -desiredStep;
+        });
 
-            const conflictRatio = conflictCount / Math.max(this.priorities.nietMet.length, 1);
-            groupscore = 50 - (conflictRatio * 50); // 0-50 if conflicts exist
-        }
+        // Undesired persons: penalty presence, small reward for absent.
+        undesired.forEach(name => {
+            const found = groupMembers.some(member => member.includes(name) || name.includes(member));
+            groupscore += found ? -undesiredStep : (undesired.length > 0 ? (20 / undesired.length) : 0);
+        });
+
+        groupscore = Math.max(0, Math.min(100, groupscore));
 
         // Clamp groupscore between 0 and 100
         groupscore = Math.max(0, Math.min(100, groupscore));
@@ -77,15 +71,16 @@ class Person {
         // === BLEND SCORES based on PRIORITY ===
         // Priority scale: 1-3 = prefer tak, 4-6 = neutral, 7-10 = prefer co-leaders
         // Convert prioriteit (1-10) to weight (0-1) where:
-        //   1 = weight 0 (100% takscore)
-        //   5.5 = weight 0.5 (50/50)
-        //   10 = weight 1 (100% groupscore)
-        const weight = (this.priorities.prioriteit - 1) / 9;
+        //   1 = weight 0 (100% takscore), 10 = weight 1 (100% groupscore)
+        const prioriteit = Math.max(1, Math.min(10, Number(this.priorities.prioriteit) || 5));
+        const weight = (prioriteit - 1) / 9;
+
         const finalScore = takscore * (1 - weight) + groupscore * weight;
 
         // Store individual scores for display if needed
         this.takscore = takscore;
         this.groupscore = groupscore;
+        this.priority = prioriteit;
 
         return Math.max(0, Math.min(100, finalScore));
     }
@@ -306,7 +301,11 @@ const app = {
                 ${person.score > 0 ? person.score.toFixed(0) : '—'}${person.score > 0 ? '%' : ''}
             </div>
             <div class="person-info">
-                <strong>Voorkeur:</strong> ${person.preferences.tak1}<br>
+                <strong>Voorkeur 1:</strong> ${person.preferences.tak1}<br>
+                <strong>Voorkeur 2:</strong> ${person.preferences.tak2}<br>
+                <strong>Voorkeur 3:</strong> ${person.preferences.tak3}<br>
+                <strong>Graag met:</strong> ${person.priorities.metWie && person.priorities.metWie.length > 0 ? person.priorities.metWie.join(', ') : 'Geen voorkeur'}<br>
+                <strong>Niet met:</strong> ${person.priorities.nietMet && person.priorities.nietMet.length > 0 ? person.priorities.nietMet.join(', ') : 'Geen voorkeur'}<br>
                 <strong>Prioriteit:</strong> ${person.priorities.prioriteit > 5 ? '👥 Medeleiding' : '📍 Tak'}
             </div>
         `;
