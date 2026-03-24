@@ -1,27 +1,18 @@
-# Groepsleiding Toewijzing Tool
+# Groepsleiding Tool
 
 Een web-applicatie voor het toewijzen van scoutleiders aan groepen op basis van voorkeuren, met drag-and-drop en automatische satisfactie scoring.
 
 ## 🚀 Quick Start
 
-1. Open `index.html` in je webbrowser
+1. Ga naar [froestoek.github.io/](https://froestoek.github.io/GroepsleidingTool/)
 2. Sleep een Excel bestand met de leiders-data erboven of klik om te selecteren
 3. Sleep leiders naar hun groepen
 4. Controleer de satisfactie scores en conflicten
 
 ## 📊 Excel Format
 
-Je Excel bestand moet deze kolommen bevatten:
-
-| Kolom | Type | Beschrijving |
-|-------|------|-------------|
-| Naam | Tekst | Naam van de leider |
-| Tak1 | Tekst | 1e voorkeur groep |
-| Tak2 | Tekst | 2e voorkeur groep |
-| Tak3 | Tekst | 3e voorkeur groep |
-| Met_wie | Tekst | Kommagescheiden namen van leiders waarmee zij graag willen werken |
-| Niet_met | Tekst | Kommagescheiden namen van leiders waarmee zij NIET willen werken |
-| Prioriteit | Getal | 1-10 schaal (1-3 = voorkeur voor groep/tak, 7-10 = voorkeur voor medeleiding) |
+Je Excel bestand moet deze kolommen bevatten:(zie sample.xlsx)
+naam, Tak1,Tak2,Tak3,Met_wie,Niet_met,Prioriteit
 
 ### Voorbeeld:
 ```
