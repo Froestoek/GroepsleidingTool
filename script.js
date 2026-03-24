@@ -355,6 +355,150 @@ const app = {
         });
     },
 
+    // Export current state to Excel file
+    exportToExcel() {
+        if (this.people.length === 0) {
+            this.showStatus('Geen gegevens om te exporteren', 'error');
+            return;
+        }
+
+        const unassigned = this.people.filter(p => !p.assignedGroup);
+        if (unassigned.length > 0) {
+            this.showStatus(`Kan niet exporteren: ${unassigned.length} persoon/personen niet toegewezen`, 'error');
+            return;
+        }
+
+        const exportData = this.people.map(person => ({
+            Naam: person.naam,
+            'Assigned Group': person.assignedGroup || 'Ongeassignerd',
+            Score: person.score.toFixed(1),
+            Tak1: person.preferences.tak1,
+            Tak2: person.preferences.tak2,
+            Tak3: person.preferences.tak3,
+            'Met wie': person.priorities.metWie ? person.priorities.metWie.join(', ') : '',
+            'Niet met': person.priorities.nietMet ? person.priorities.nietMet.join(', ') : '',
+            Prioriteit: person.priorities.prioriteit || ''
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Groepsleiding');
+
+        const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], { type: 'application/octet-stream' });
+        const fileName = `Groepsleiding_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        this.showStatus('✓ Export naar Excel geslaagd', 'success');
+    },
+
+    // Export current state to PDF file
+    exportToPDF() {
+        if (this.people.length === 0) {
+            this.showStatus('Geen gegevens om te exporteren', 'error');
+            return;
+        }
+
+        const unassigned = this.people.filter(p => !p.assignedGroup);
+        if (unassigned.length > 0) {
+            this.showStatus(`Kan niet exporteren: ${unassigned.length} persoon/personen niet toegewezen`, 'error');
+            return;
+        }
+
+        if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+            this.showStatus('PDF-bibliotheek niet geladen (jsPDF)', 'error');
+            return;
+        }
+
+        this.updateScores();
+
+        const doc = new window.jspdf.jsPDF({ orientation: 'landscape' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        const title = 'Groepsleiding export';
+        let cursorY = 14;
+        doc.setFontSize(16);
+        doc.text(title, 14, cursorY);
+        cursorY += 10;
+
+        const sortedGroups = Array.from(this.groups).sort();
+
+        const rowHeight = 6;
+        const initialMarginX = 14;
+        const colWidths = [80, 30, 70, 70, 70];
+
+        sortedGroups.forEach((groupName, index) => {
+            if (cursorY > pageHeight - 30) {
+                doc.addPage();
+                cursorY = 14;
+            }
+
+            const groupMembers = this.people
+                .filter(p => p.assignedGroup === groupName)
+                .sort((a, b) => a.naam.localeCompare(b.naam));
+
+            const avgGroupScore = groupMembers.length > 0
+                ? (groupMembers.reduce((sum, p) => sum + p.score, 0) / groupMembers.length).toFixed(1)
+                : '0.0';
+
+            doc.setFontSize(12);
+            doc.text(`Tak: ${groupName} (Gemiddelde score: ${avgGroupScore})`, initialMarginX, cursorY);
+            cursorY += rowHeight;
+
+            // Table header
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            const headers = ['Naam', 'Score', 'Tak1', 'Tak2', 'Tak3'];
+            let x = initialMarginX;
+            headers.forEach((header, i) => {
+                doc.text(header, x, cursorY);
+                x += colWidths[i];
+            });
+            doc.setFont('helvetica', 'normal');
+            cursorY += rowHeight;
+
+            if (groupMembers.length === 0) {
+                doc.text('Geen leden toegewezen', initialMarginX, cursorY);
+                cursorY += rowHeight;
+            } else {
+                groupMembers.forEach(person => {
+                    if (cursorY > pageHeight - 20) {
+                        doc.addPage();
+                        cursorY = 14;
+                    }
+
+                    x = initialMarginX;
+                    const values = [
+                        person.naam,
+                        person.score.toFixed(1),
+                        person.preferences.tak1,
+                        person.preferences.tak2,
+                        person.preferences.tak3
+                    ];
+
+                    values.forEach((value, i) => {
+                        doc.text(String(value || '-'), x, cursorY);
+                        x += colWidths[i];
+                    });
+
+                    cursorY += rowHeight;
+                });
+            }
+
+            cursorY += 5;
+        });
+
+        doc.save(`Groepsleiding_${new Date().toISOString().slice(0, 10)}.pdf`);
+        this.showStatus('✓ Export naar PDF geslaagd', 'success');
+    },
+
     // Check and display conflicts
     checkConflicts() {
         const conflictsList = document.getElementById('conflictsList');
@@ -481,5 +625,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('Weet je zeker dat je alles wilt wissen?')) {
             app.clear();
         }
+    });
+
+    // Export buttons
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+
+    exportExcelBtn.addEventListener('click', () => {
+        app.exportToExcel();
+    });
+
+    exportPdfBtn.addEventListener('click', () => {
+        app.exportToPDF();
     });
 });

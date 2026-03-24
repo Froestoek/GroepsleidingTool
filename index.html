@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎯 Groepsleiding Tool</h1>
+            <h1>⚜️Groepsleiding Tool⚜️</h1>
             <p>Sleep leiders naar hun groepen optimaliseer de gemiddelde score</p>
         </header>
 
@@ -29,7 +29,7 @@
         <section id="statsSection" class="stats-section" style="display: none;">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <span class="stat-label">Totale leiders</span>
+                    <span class="stat-label">🏕️Totale leiders🏕️</span>
                     <span class="stat-value" id="totalPeople">0</span>
                 </div>
                 <div class="stat-card">
@@ -44,6 +44,10 @@
                     <span class="stat-label">Gemiddelde score</span>
                     <span class="stat-value" id="avgScore">-</span>
                 </div>
+            </div>
+            <div class="export-buttons">
+                <button id="exportExcelBtn" class="btn btn-secondary">Export naar Excel</button>
+                <button id="exportPdfBtn" class="btn btn-secondary">Export naar PDF</button>
             </div>
         </section>
 
@@ -77,9 +81,15 @@
         </div>
     </div>
 
+    <footer class="app-footer">
+        <p>⚜️Made by Gilles Van Daele⚜️</p>
+    </footer>
+
     <!-- Libraries from CDN -->
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
     <!-- Main Application Script -->
     <script src="script.js"></script>
