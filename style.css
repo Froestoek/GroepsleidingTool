@@ -1,0 +1,439 @@
+/* ======================
+   VARIABLES & RESET
+   ====================== */
+:root {
+    --primary: #4F46E5;
+    --primary-light: #6366F1;
+    --secondary: #64748B;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --border: #E2E8F0;
+    --bg-light: #F8FAFC;
+    --text-dark: #1E293B;
+    --text-light: #64748B;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+/* ======================
+   CONTAINER & LAYOUT
+   ====================== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+header {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* ======================
+   UPLOAD SECTION
+   ====================== */
+.upload-section {
+    margin-bottom: 2rem;
+}
+
+.upload-box {
+    background: white;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.upload-box:hover {
+    border-color: var(--primary);
+    background: var(--bg-light);
+}
+
+.upload-box input {
+    display: none;
+}
+
+.upload-box label {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.upload-box label:hover {
+    background: var(--primary-light);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+    margin-left: 1rem;
+}
+
+.btn-secondary:hover {
+    background: #475569;
+    transform: translateY(-2px);
+}
+
+.status-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+}
+
+.status-message.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    display: block;
+}
+
+.status-message.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    display: block;
+}
+
+/* ======================
+   STATS SECTION
+   ====================== */
+.stats-section {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ======================
+   PEOPLE CARDS
+   ====================== */
+.people-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    min-height: 100px;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.person-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: grab;
+    transition: all 0.2s ease;
+    flex: 0 0 auto;
+    width: 240px;
+    border-left: 4px solid var(--border);
+}
+
+.person-card:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.person-card.sortable-chosen {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Satisfaction Score Colors */
+.person-card.score-high {
+    border-left-color: var(--success);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.person-card.score-medium {
+    border-left-color: var(--warning);
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.person-card.score-low {
+    border-left-color: var(--danger);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.person-card h3 {
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+}
+
+.person-card .score {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.score.high {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.score.medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+}
+
+.score.low {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.person-info {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+}
+
+/* ======================
+   GROUPS SECTION
+   ====================== */
+.groups-section h2,
+.unassigned-section h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.unassigned-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 3rem;
+}
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+#groupsContainer {
+    display: contents;
+}
+
+.group-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.group-card:hover {
+    transform: translateY(-4px);
+}
+
+.group-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1.25rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.group-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border);
+}
+
+.group-stats span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.group-stats-value {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.group-list {
+    padding: 1rem;
+    min-height: 150px;
+    background: white;
+}
+
+.group-list.sortable-ghost {
+    background: var(--bg-light);
+}
+
+/* ======================
+   CONFLICTS SECTION
+   ====================== */
+.conflicts-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    margin-top: 2rem;
+}
+
+.conflicts-section h2 {
+    color: var(--danger);
+    margin-bottom: 1rem;
+}
+
+.conflict-item {
+    padding: 1rem;
+    background: var(--bg-light);
+    border-left: 3px solid var(--danger);
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.conflict-item strong {
+    color: var(--text-dark);
+}
+
+.conflicts-list:empty::after {
+    content: "✓ Geen conflicten gevonden!";
+    color: var(--success);
+    font-weight: 600;
+}
+
+/* ======================
+   RESPONSIVE
+   ====================== */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .groups-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .person-card {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .upload-box label {
+        display: block;
+        margin-bottom: 1rem;
+    }
+}
+
+/* ======================
+   ANIMATIONS
+   ====================== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.person-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Drag over state */
+.sortable-over {
+    box-shadow: inset 0 0 0 2px var(--primary) !important;
+    background: rgba(79, 70, 229, 0.05) !important;
+}
