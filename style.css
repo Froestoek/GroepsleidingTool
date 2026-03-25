@@ -270,6 +270,17 @@ header p {
     background: rgba(239, 68, 68, 0.05);
 }
 
+/* Gender Colors for Unassigned */
+.person-card.gender-male {
+    border-left-color: #5e92e4; /* Blue */
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.person-card.gender-female {
+    border-left-color: #ff58abe4; /* Pink */
+    background: rgba(236, 72, 153, 0.1);
+}
+
 .person-card h3 {
     font-size: 1rem;
     color: var(--text-dark);

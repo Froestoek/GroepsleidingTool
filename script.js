@@ -98,6 +98,10 @@ class Person {
     getScoreClass() {
         return `score-${this.getScoreLevel()}`;
     }
+
+    getGenderClass() {
+        return this.gender === 'M' ? 'gender-male' : 'gender-female';
+    }
 }
 
 // ==================== APP STATE ====================
@@ -330,7 +334,7 @@ const app = {
     // Create a person card element
     createPersonCard(person) {
         const card = document.createElement('div');
-        card.className = `person-card ${person.getScoreClass()}`;
+        card.className = `person-card ${person.assignedGroup ? person.getScoreClass() : person.getGenderClass()}`;
         card.dataset.name = person.naam;
 
         card.innerHTML = `
