@@ -5,10 +5,12 @@
 
 // ==================== PERSON CLASS ====================
 class Person {
-    constructor(naam, preferences, priorities) {
+    constructor(naam, preferences, priorities, gender, hasDriversLicense) {
         this.naam = naam;
         this.preferences = preferences; // { tak1, tak2, tak3 }
         this.priorities = priorities;   // { metWie: [], nietMet: [], prioriteit: 1-10 }
+        this.gender = gender; // 'M' or 'V' (Man or Vrouw)
+        this.hasDriversLicense = hasDriversLicense; // true or false
         this.assignedGroup = null;
         this.score = 0;
     }
@@ -173,7 +175,15 @@ const app = {
             // Parse priority (1-10, lower = prefer group, higher = prefer co-leaders)
             const prioriteit = Math.max(1, Math.min(10, parseInt(row.Prioriteit || row.prioriteit) || 5));
 
-            const person = new Person(naam, { tak1, tak2, tak3 }, { metWie, nietMet, prioriteit });
+            // Parse gender (M/V or Man/Vrouw)
+            const gender = (row.Geslacht || row.geslacht || row.Gender || row.gender || '').toString().trim().toUpperCase();
+            const normalizedGender = gender === 'M' || gender === 'MAN' ? 'M' : gender === 'V' || gender === 'VROUW' ? 'V' : '';
+
+            // Parse drivers license (Ja/Nee, Yes/No, 1/0, true/false)
+            const driversLicense = (row.Rijbewijs || row.rijbewijs || row.DriversLicense || row.driversLicense || '').toString().trim().toLowerCase();
+            const hasDriversLicense = driversLicense === 'ja' || driversLicense === 'yes' || driversLicense === '1' || driversLicense === 'true';
+
+            const person = new Person(naam, { tak1, tak2, tak3 }, { metWie, nietMet, prioriteit }, normalizedGender, hasDriversLicense);
             this.people.push(person);
         });
 
@@ -259,10 +269,22 @@ const app = {
                 ? (groupMembers.reduce((sum, p) => sum + p.score, 0) / groupMembers.length).toFixed(0)
                 : 0;
 
+            const menCount = groupMembers.filter(p => p.gender === 'M').length;
+            const womenCount = groupMembers.filter(p => p.gender === 'V').length;
+            const driversCount = groupMembers.filter(p => p.hasDriversLicense).length;
+
             stats.innerHTML = `
                 <span>
                     <span class="group-stats-value">${groupMembers.length}</span>
                     <span>Leiders</span>
+                </span>
+                <span>
+                    <span class="group-stats-value">${menCount}/${womenCount}</span>
+                    <span>Mannen/Vrouwen</span>
+                </span>
+                <span>
+                    <span class="group-stats-value">${driversCount}</span>
+                    <span>Rijbewijs</span>
                 </span>
                 <span>
                     <span class="group-stats-value">${groupMembers.length > 0 ? avgGroupScore : '-'}</span>
@@ -301,6 +323,8 @@ const app = {
                 ${person.score > 0 ? person.score.toFixed(0) : '—'}${person.score > 0 ? '%' : ''}
             </div>
             <div class="person-info">
+                <strong>Geslacht:</strong> ${person.gender === 'M' ? 'Man' : person.gender === 'V' ? 'Vrouw' : 'Onbekend'}<br>
+                <strong>Rijbewijs:</strong> ${person.hasDriversLicense ? 'Ja' : 'Nee'}<br>
                 <strong>Voorkeur 1:</strong> ${person.preferences.tak1}<br>
                 <strong>Voorkeur 2:</strong> ${person.preferences.tak2}<br>
                 <strong>Voorkeur 3:</strong> ${person.preferences.tak3}<br>
@@ -370,6 +394,8 @@ const app = {
 
         const exportData = this.people.map(person => ({
             Naam: person.naam,
+            Geslacht: person.gender === 'M' ? 'Man' : person.gender === 'V' ? 'Vrouw' : '',
+            Rijbewijs: person.hasDriversLicense ? 'Ja' : 'Nee',
             'Assigned Group': person.assignedGroup || 'Ongeassignerd',
             Score: person.score.toFixed(1),
             Tak1: person.preferences.tak1,
@@ -432,30 +458,34 @@ const app = {
 
         const rowHeight = 6;
         const initialMarginX = 14;
-        const colWidths = [80, 30, 70, 70, 70];
+const colWidths = [60, 20, 20, 50, 50, 50];
 
-        sortedGroups.forEach((groupName, index) => {
-            if (cursorY > pageHeight - 30) {
-                doc.addPage();
-                cursorY = 14;
-            }
+            sortedGroups.forEach((groupName, index) => {
+                if (cursorY > pageHeight - 30) {
+                    doc.addPage();
+                    cursorY = 14;
+                }
 
-            const groupMembers = this.people
-                .filter(p => p.assignedGroup === groupName)
-                .sort((a, b) => a.naam.localeCompare(b.naam));
+                const groupMembers = this.people
+                    .filter(p => p.assignedGroup === groupName)
+                    .sort((a, b) => a.naam.localeCompare(b.naam));
 
-            const avgGroupScore = groupMembers.length > 0
-                ? (groupMembers.reduce((sum, p) => sum + p.score, 0) / groupMembers.length).toFixed(1)
-                : '0.0';
+                const avgGroupScore = groupMembers.length > 0
+                    ? (groupMembers.reduce((sum, p) => sum + p.score, 0) / groupMembers.length).toFixed(1)
+                    : '0.0';
 
-            doc.setFontSize(12);
-            doc.text(`Tak: ${groupName} (Gemiddelde score: ${avgGroupScore})`, initialMarginX, cursorY);
-            cursorY += rowHeight;
+                const menCount = groupMembers.filter(p => p.gender === 'M').length;
+                const womenCount = groupMembers.filter(p => p.gender === 'V').length;
+                const driversCount = groupMembers.filter(p => p.hasDriversLicense).length;
 
-            // Table header
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            const headers = ['Naam', 'Score', 'Tak1', 'Tak2', 'Tak3'];
+                doc.setFontSize(12);
+                doc.text(`Tak: ${groupName} (Gem. score: ${avgGroupScore}, ${menCount}M ${womenCount}V, ${driversCount} rijbewijs)`, initialMarginX, cursorY);
+                cursorY += rowHeight;
+
+                // Table header
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                const headers = ['Naam', 'Geslacht', 'Rijbewijs', 'Score', 'Tak1', 'Tak2'];
             let x = initialMarginX;
             headers.forEach((header, i) => {
                 doc.text(header, x, cursorY);
@@ -477,10 +507,11 @@ const app = {
                     x = initialMarginX;
                     const values = [
                         person.naam,
+                        person.gender === 'M' ? 'Man' : person.gender === 'V' ? 'Vrouw' : '-',
+                        person.hasDriversLicense ? 'Ja' : 'Nee',
                         person.score.toFixed(1),
                         person.preferences.tak1,
-                        person.preferences.tak2,
-                        person.preferences.tak3
+                        person.preferences.tak2
                     ];
 
                     values.forEach((value, i) => {

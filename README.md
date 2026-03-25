@@ -12,16 +12,19 @@ Een web-applicatie voor het toewijzen van scoutleiders aan groepen op basis van 
 ## 📊 Excel Format
 
 Je Excel bestand moet deze kolommen bevatten:(zie sample.xlsx)
-naam, Tak1,Tak2,Tak3,Met_wie,Niet_met,Prioriteit
+naam, Geslacht, Rijbewijs, Tak1,Tak2,Tak3,Met_wie,Niet_met,Prioriteit
 
 ### Voorbeeld:
 ```
-Naam           | Tak1     | Tak2     | Tak3     | Met_wie        | Niet_met | Prioriteit
-Jan Jansen     | Welpen   | Scouts   | Pioniers | Erik, Maria    | Tom      | 3
-Maria de Vries | Scouts   | Welpen   | Pioniers | Jan, Erik      |          | 8
-Erik Smit      | Pioniers | Scouts   | Welpen   | Maria, Jan     | Tom      | 5
-Tom Bakker     | Welpen   | Welpen   | Welpen   |                | Erik     | 2
+Naam           | Geslacht | Rijbewijs | Tak1     | Tak2     | Tak3     | Met_wie        | Niet_met | Prioriteit
+Jan Jansen     | M        | Ja        | Welpen   | Scouts   | Pioniers | Erik, Maria    | Tom      | 3
+Maria de Vries | V        | Nee       | Scouts   | Welpen   | Pioniers | Jan, Erik      |          | 8
+Erik Smit      | M        | Ja        | Pioniers | Scouts   | Welpen   | Maria, Jan     | Tom      | 5
+Tom Bakker     | M        | Nee       | Welpen   | Welpen   | Welpen   |                | Erik     | 2
 ```
+
+**Geslacht:** M (Man) of V (Vrouw)  
+**Rijbewijs:** Ja of Nee (of leeg voor Nee)
 
 ## 🎯 Scoring System
 
