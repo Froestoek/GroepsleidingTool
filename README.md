@@ -12,19 +12,20 @@ Een web-applicatie voor het toewijzen van scoutleiders aan groepen op basis van 
 ## 📊 Excel Format
 
 Je Excel bestand moet deze kolommen bevatten:(zie sample.xlsx)
-naam, Geslacht, Rijbewijs, Tak1,Tak2,Tak3,Met_wie,Niet_met,Prioriteit
+naam, Geslacht, Rijbewijs, Ervaring, Tak1,Tak2,Tak3,Met_wie,Niet_met,Prioriteit
 
 ### Voorbeeld:
 ```
-Naam           | Geslacht | Rijbewijs | Tak1     | Tak2     | Tak3     | Met_wie        | Niet_met | Prioriteit
-Jan Jansen     | M        | Ja        | Welpen   | Scouts   | Pioniers | Erik, Maria    | Tom      | 3
-Maria de Vries | V        | Nee       | Scouts   | Welpen   | Pioniers | Jan, Erik      |          | 8
-Erik Smit      | M        | Ja        | Pioniers | Scouts   | Welpen   | Maria, Jan     | Tom      | 5
-Tom Bakker     | M        | Nee       | Welpen   | Welpen   | Welpen   |                | Erik     | 2
+Naam           | Geslacht | Rijbewijs | Ervaring | Tak1     | Tak2     | Tak3     | Met_wie        | Niet_met | Prioriteit
+Jan Jansen     | M        | Ja        | 5        | Welpen   | Scouts   | Pioniers | Erik, Maria    | Tom      | 3
+Maria de Vries | V        | Nee       | 3        | Scouts   | Welpen   | Pioniers | Jan, Erik      |          | 8
+Erik Smit      | M        | Ja        | 8        | Pioniers | Scouts   | Welpen   | Maria, Jan     | Tom      | 5
+Tom Bakker     | M        | Nee       | 2        | Welpen   | Welpen   | Welpen   |                | Erik     | 2
 ```
 
 **Geslacht:** M (Man) of V (Vrouw)  
-**Rijbewijs:** Ja of Nee (of leeg voor Nee)
+**Rijbewijs:** Ja of Nee (of leeg voor Nee)  
+**Ervaring:** Aantal jaren ervaring (nummer)
 
 ## 🎯 Scoring System
 
